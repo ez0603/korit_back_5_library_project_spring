@@ -13,15 +13,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-@EnableWebSecurity // security를 따라가는게 아닌 만든걸로
+@EnableWebSecurity
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private PermitAllFilter permitAllFilter;
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
     private AuthEntryPoint authEntryPoint;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -29,17 +31,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors(); // WebMvcConfig에 있는 크로스오리진을 설정하기 위해선 꼭 필요
-        http.csrf().disable(); // csrf = SSR일때만 가능, 만든 페이지는 클라이언트사이드렌더링이기 때문에 disable을 해줌
+        http.cors();
+        http.csrf().disable();
         http.authorizeRequests()
                 .antMatchers("/server/**", "/auth/**")
+                .permitAll()
+                .antMatchers("/mail/authenticate")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilterAfter(permitAllFilter, LogoutFilter.class) // 순서는 필터 먼저 동작 / permitAllFilter = 토큰이 필요한지 거르기위한단계
+                .addFilterAfter(permitAllFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint);
+
     }
 }
