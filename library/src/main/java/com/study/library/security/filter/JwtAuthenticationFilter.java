@@ -2,6 +2,7 @@ package com.study.library.security.filter;
 
 import com.study.library.jwt.JwtProvider;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -27,12 +28,15 @@ public class JwtAuthenticationFilter extends GenericFilter {
         if(!isPermitAll) { // ! (not)을 걸어놨기 때문에 인증이 필요함
             String accessToken = request.getHeader("Authorization");
             String removedBearerToken = jwtProvider.removeBearer(accessToken);
-            Claims claims = jwtProvider.getClaims(removedBearerToken);
-            if(claims == null) {
+            Claims claims = null;
+
+            try {
+                claims = jwtProvider.getClaims(removedBearerToken);
+            } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED); // 인증실패 (401 에러) HttpStatus.UNAUTHORIZED.value() 도 가능
                 return;
-
             }
+
             Authentication authentication = jwtProvider.getAuthentication(claims);
 
             if(authentication == null) {

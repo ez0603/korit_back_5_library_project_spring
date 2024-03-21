@@ -17,9 +17,11 @@ public class PermitAllFilter extends GenericFilter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         List<String> antMatchers = List.of(
+                "/login",
                 "/error",
                 "/server",
                 "/auth",
+                "/oauth2",
                 "/mail/authenticate"
         );
 
