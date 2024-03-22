@@ -18,18 +18,24 @@ public class OAuth2PrincipalUserService implements OAuth2UserService {
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
+        System.out.println(attributes);
+
         String provider = userRequest.getClientRegistration().getClientName(); // getClientName = Google, Kakao, Naver
         Map<String, Object> newAttributes = null;
+        String id = null;
         switch (provider) {
             case "Google":
-                String id = attributes.get("sub").toString();
-                newAttributes = Map.of("id", id, "provider", provider); // google은 키값이 sub이라 키값 통일을 위해 바꿔줌
+                id = attributes.get("sub").toString();
                 break;
             case "Naver":
+                Map<String, Object> response = (Map<String, Object>) attributes.get("response"); // naver은 response안에 객체로 되어있기때문에 Map으로 바꿔줌
+                id = response.get("id").toString(); // Map으로 못쓰기 때문에 다운캐스팅
                 break;
             case "Kakao":
+                id = attributes.get("id").toString();
                 break;
         }
+        newAttributes = Map.of("id", id, "provider", provider); // google은 키값이 sub이라 키값 통일을 위해 바꿔줌
 
         return new DefaultOAuth2User(oAuth2User.getAuthorities(), newAttributes, "id");
     }
