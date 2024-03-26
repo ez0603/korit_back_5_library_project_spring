@@ -60,7 +60,7 @@
          btt.book_type_name,
          bt.category_id,
          ct.category_name,
-         bt.cover_img_url
+         bt.cover_img_url,
          bt.create_date,
          bt.update_date
       from
