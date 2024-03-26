@@ -40,7 +40,7 @@ public class JwtProvider {
         int userId = user.getUserId();
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-        Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24)); // 1초 * 1분 * 1시간 * 24 = 하루 / 만료시간 => 하루를 new Date에 다시 넣어주기 때문에 미래
+        Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20)); // 1초 * 1분 * 1시간 * 24 = 하루 / 만료시간 => 하루를 new Date에 다시 넣어주기 때문에 미래
 
         String accessToken = Jwts.builder()
                 .claim("userId", userId)
