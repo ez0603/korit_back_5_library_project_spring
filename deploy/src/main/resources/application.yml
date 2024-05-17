@@ -1,0 +1,54 @@
+spring:
+  profiles:
+    active: blue_server
+    group:
+      local_server: local, common, secret
+      blue_server: blue, common, secret
+      green_server: green, common, secret
+
+server:
+  env: blue
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  port: 8080
+  deploy-address: localhost
+  name: local
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: 8080
+  deploy-address: 43.201.90.202
+  name: blue_server
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: 9090
+  deploy-address: 43.201.90.202
+  name: green_server
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+
+client:
+  deploy-address: "localhost:3000"
